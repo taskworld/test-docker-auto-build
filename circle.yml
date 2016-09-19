@@ -10,14 +10,18 @@ machine:
     - docker
 
 dependencies:
+  cache_directories:
+    - '~/docker'
   override:
     - docker info
+    - if [[ -e ~/docker/image.tar ]]; then docker load -i ~/docker/image.tar; fi
     - docker build --rm=false -t $DOCKER_REPOSITORY:$CIRCLE_SHA1 .
     - docker build --rm=false -t $DOCKER_REPOSITORY:latest .
+    - mkdir -p ~/docker; docker save $DOCKER_REPOSITORY > ~/docker/image.tar
 
 test:
   override:
-    - docker run -d -p 13000:13000 $DOCKER_REPOSITORY:$CIRCLE_SHA1; sleep 5
+    - docker run -d -p 13000:13000 $DOCKER_REPOSITORY:$CIRCLE_SHA1; sleep 2
     - curl --retry 10 --retry-delay 1 -v http://localhost:13000
 
 deployment:
