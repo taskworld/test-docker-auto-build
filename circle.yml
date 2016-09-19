@@ -13,6 +13,7 @@ dependencies:
   override:
     - docker info
     - docker build --rm=false -t $DOCKER_REPOSITORY:$CIRCLE_SHA1 .
+    - docker build --rm=false -t $DOCKER_REPOSITORY:latest .
 
 test:
   override:
