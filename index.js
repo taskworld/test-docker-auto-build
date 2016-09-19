@@ -33,11 +33,3 @@ server.route({
     reply(request.query)
   }
 })
-
-server.route({
-  method: 'GET',
-  path: '/echo3',
-  handler: function (request, reply) {
-    reply(request.query)
-  }
-})
