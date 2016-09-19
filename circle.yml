@@ -15,6 +15,7 @@ dependencies:
   override:
     - docker info
     - if [[ -e ~/docker/image.tar ]]; then docker load -i ~/docker/image.tar; fi
+    - docker build -t $DOCKER_REPOSITORY .
     - docker build --rm=false -t $DOCKER_REPOSITORY:$CIRCLE_SHA1 .
     - docker build --rm=false -t $DOCKER_REPOSITORY:latest .
     - mkdir -p ~/docker; docker save $DOCKER_REPOSITORY > ~/docker/image.tar
