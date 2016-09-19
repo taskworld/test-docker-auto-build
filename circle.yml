@@ -1,0 +1,28 @@
+
+machine:
+  node:
+    version: 6
+  environment:
+    STAGING_URL: 'staging-sg-api.taskworld.com'
+    PRODUCTION_URL: 'enterprise-api.taskworld.com'
+    DOCKER_REPOSITORY: 'chanon1taskworld/test'
+  services:
+    - docker
+
+dependencies:
+  override:
+    - docker info
+    - docker build --rm=false -t $DOCKER_REPOSITORY:$CIRCLE_SHA1 .
+
+test:
+  override:
+    - docker run -d -p 13000:13000 $DOCKER_REPOSITORY:$CIRCLE_SHA1; sleep 5
+    - curl --retry 10 --retry-delay 1 -v http://localhost:13000
+
+deployment:
+  hub:
+    branch: master
+    commands:
+      - docker login -u $DOCKER_USER -p $DOCKER_PASS
+      - docker push $DOCKER_REPOSITORY:$CIRCLE_SHA1
+      - docker push $DOCKER_REPOSITORY:latest
